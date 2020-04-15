@@ -28,6 +28,13 @@ class BoardView: View {
     private var minusPaint: Paint
     private var wordsPaint: Paint
 
+    //Add to align the text and symbols down a little
+    // -> modify the two drawText statements in the onDraw override method*
+    private val textShim: Int = 60
+
+    // Instantiate the ButtonGame class
+    private val mGame: ButtonGame = ButtonGame()
+
     init {
         //paint object for drawing circles in onDraw -- also configure it
         plusPaint = Paint().apply {
@@ -73,20 +80,20 @@ class BoardView: View {
         canvas.drawRect(0f, 0f, canvasWidth, canvasHeight, backPaint)
 
         // Now we're going to draw the counter value at the top.
-        // For now we will just display the value 0.
-        // Retrieve the value of score from the game class
-        val score = 0.toString()
+        // Retrieve the value of score from the game class*
+        val score = mGame.counter.toString()
 
         canvas.drawText(score, viewWidthHalf, 200f, wordsPaint)
 
         // 2 Circles
         val radius: Float = viewWidthHalf/3
 
+        // Add the textShim to both the circle drawTexts
         canvas.drawCircle(viewWidthHalf, viewHeightThird, radius, plusPaint)
-        canvas.drawText("+", viewWidthHalf, viewHeightThird, wordsPaint)
+        canvas.drawText("+", viewWidthHalf, viewHeightThird + textShim, wordsPaint)
 
         canvas.drawCircle(viewWidthHalf, viewHeightThird*2, radius, minusPaint)
-        canvas.drawText("-", viewWidthHalf, (viewHeightThird*2), wordsPaint)
+        canvas.drawText("-", viewWidthHalf, (viewHeightThird*2) + textShim, wordsPaint)
     }
 
 }
