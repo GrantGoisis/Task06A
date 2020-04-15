@@ -40,6 +40,15 @@ class BoardView: View {
     //Add Gesture Detection
     private val myGestureDetector = GestureDetector(context, myGestureListener())
 
+    // listenerImp represents the implementation of a function, as specified in the
+    // GameChangeListener interface, called onGameChange.
+    var listenerImp = object: GameChangeListener {
+        override fun onGameChange(buttonGame: ButtonGame) {
+            // Things that we want to do in this View when the game state changes
+            invalidate()
+            }
+    }
+
     init {
         //paint object for drawing circles in onDraw -- also configure it
         plusPaint = Paint().apply {
@@ -68,6 +77,12 @@ class BoardView: View {
             setTextSize(200.toFloat())
             setTypeface(Typeface.SANS_SERIF)
         }
+
+        // This registers the listener with the game class, so that the game class knows where
+        // the onGame function is, when something changes, and it has to be executed.
+        // In this case, the fireGameChange() function in ButtonGame, will cause the onGameChange
+        // function in BoardView  to be executed, which will in turn cause the View to be refreshed.
+        mGame.setGameChangeListener(listenerImp)
     }
 
     // Add black canvas -> overrides the onDraw method.
@@ -135,7 +150,6 @@ class BoardView: View {
                 mGame.buttonPressed('m')
             }
 
-            invalidate()
             return true
         }
     } // End of myGestureListener class
