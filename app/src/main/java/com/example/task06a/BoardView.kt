@@ -9,6 +9,8 @@ import android.graphics.Paint
 import android.graphics.Paint.Style
 import android.graphics.Typeface
 import android.graphics.Color
+import android.view.GestureDetector
+import android.view.MotionEvent
 
 class BoardView: View {
     constructor(context: Context?) : super(context)
@@ -34,6 +36,9 @@ class BoardView: View {
 
     // Instantiate the ButtonGame class
     private val mGame: ButtonGame = ButtonGame()
+
+    //Add Gesture Detection
+    private val myGestureDetector = GestureDetector(context, myGestureListener())
 
     init {
         //paint object for drawing circles in onDraw -- also configure it
@@ -95,5 +100,44 @@ class BoardView: View {
         canvas.drawCircle(viewWidthHalf, viewHeightThird*2, radius, minusPaint)
         canvas.drawText("-", viewWidthHalf, (viewHeightThird*2) + textShim, wordsPaint)
     }
+
+    //Add onTouchEvent handler
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        return myGestureDetector.onTouchEvent(ev) || super.onTouchEvent(ev)
+    }
+
+    // Nested Gesture Listener class ->
+    inner class myGestureListener: GestureDetector.SimpleOnGestureListener() {
+
+        // You should always include onDown() and it should always return true.
+        // Otherwise the GestureListener may ignore other events.
+        override fun onDown(ev: MotionEvent): Boolean {
+            return true
+        }
+
+        override fun onSingleTapUp(ev: MotionEvent): Boolean {
+            val canvasWidth = width
+            val canvasHeight = height
+
+            //get half of the width and height to locate the centre of the screen
+            val viewWidthHalf = canvasWidth / 2f
+            val viewHeightThird = canvasHeight / 3f
+
+            val radius: Float = viewWidthHalf / 3
+
+            val yCo = ev.y.toInt()
+
+            if ((yCo > viewHeightThird - radius) && (yCo < viewHeightThird + radius)) {
+                mGame.buttonPressed('p')
+            }
+
+            if ((yCo > viewHeightThird*2 -radius) && (yCo < viewHeightThird*2 +radius)) {
+                mGame.buttonPressed('m')
+            }
+
+            invalidate()
+            return true
+        }
+    } // End of myGestureListener class
 
 }
